@@ -1,51 +1,47 @@
-import mongoose from 'mongoose';
-import validator from 'validator';
+import mongoose from "mongoose";
+import validator from "validator";
 
-const queueSchema = new mongoose.Schema({
+const queueSchema = new mongoose.Schema(
+  {
     shop: {
-        type: mongoose.Schema.ObjectId,
-        ref : 'Shop',
-        required : [true , 'A Queue must have a Shop']
+      type: mongoose.Schema.ObjectId,
+      ref: "Shop",
+      required: [true, "A Queue must have a Shop"],
     },
-    user : {
-        type: mongoose.Schema.ObjectId,
-        ref : 'User',
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
     },
-    email :  {
-        type: String,
-        lowercase: true,
-        validate: [validator.isEmail, 'Please provide a valid email']
+    email: {
+      type: String,
+      lowercase: true,
+      validate: [validator.isEmail, "Please provide a valid email"],
     },
     number: {
-        type: Number,
-        default :0
+      type: Number,
+      default: 0,
     },
     service: {
-        type: mongoose.Schema.ObjectId,
-        ref : 'Service'
+      type: mongoose.Schema.ObjectId,
+      ref: "Service",
     },
     status: {
-        type: String,
-        default : 'Active',
-        enum : ['Active', 'Done' , 'Cancelled']
+      type: String,
+      default: "Waiting",
+      enum: ["Waiting", "Done", "Cancelled"],
     },
-    description : {
-        type: String,
-        trim : true
-    }
-},
-{
+    description: {
+      type: String,
+      trim: true,
+    },
+  },
+  {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    createdAt: true,
-    modifiedAt: true
-})
+    timestamps: true,
+  }
+);
 
-queueSchema.pre('save' , async function(next) {
-    
-})
+const Queue = mongoose.model("Queue", queueSchema);
 
-
-const Queue = mongoose.model('Queue', queueSchema);
-
-export default  Queue;
+export default Queue;

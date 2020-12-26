@@ -1,18 +1,38 @@
-import express from 'express';
-// import userController import './../controllers/userController');
-import {signup,login,logout, isLoggedIn} from './../controllers/authController.js';
+import express from "express";
+import {
+  getMe,
+  getUserQueue,
+  resizeUserPhoto,
+  updateMe,
+  uploadUserPhoto,
+} from "../controllers/userController.js";
+import multer from "multer";
+import {
+  signup,
+  login,
+  logout,
+  isLoggedIn,
+  loginShop,
+  signupShop,
+} from "./../controllers/authController.js";
 
 const router = express.Router();
 
-// router.use((req, res, next) =>  {
-//     req.body = req.body.data;
-//     console.log(req.body)
-//     next();
-// } )
-
-router.post('/signup',signup);
-router.post('/login', login);
-router.get('/logout',isLoggedIn, logout);
+router.post("/signup", signup);
+router.post("/login", login);
+router.get("/logout", isLoggedIn, logout);
+router.get("/getQueue", isLoggedIn, getUserQueue);
+router.get("/me", isLoggedIn, getMe);
+router.get("/logout", isLoggedIn, logout);
+router.patch(
+  "/updateMe",
+  isLoggedIn,
+  uploadUserPhoto,
+  resizeUserPhoto,
+  updateMe
+);
+router.post("/loginShop", loginShop);
+router.post("/signUpShop", signupShop);
 
 // router.post('/forgotPassword', authController.forgotPassword);
 // router.patch('/resetPassword/:token', authController.resetPassword);

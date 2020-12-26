@@ -1,70 +1,72 @@
-import crypto from 'crypto';
-import mongoose from 'mongoose';
-import validator from 'validator';
-import bcrypt from 'bcryptjs';
+import crypto from "crypto";
+import mongoose from "mongoose";
+import isEmail from "validator/lib/isEmail.js";
+import bcrypt from "bcryptjs";
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please tell us your name!']
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email']
-  },
-  photo: {
-    type: String,
-  },
-  role: {
-    type: String,
-    enum: ['user', 'owner'],
-    default: 'user'
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    minlength: 8,
-    select: false
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      // This only works on CREATE and SAVE!!!
-      validator: function(el) {
-        return el === this.password;
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Please tell us your name!"],
+    },
+    email: {
+      type: String,
+      required: [true, "Please provide your email"],
+      unique: [true, "This email is already registered"],
+      lowercase: true,
+      validate: [isEmail, "Please provide a valid email"],
+    },
+    photo: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    password: {
+      type: String,
+      required: [true, "Please provide a password"],
+      minlength: 8,
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        // This only works on CREATE and SAVE!!!
+        validator: function (el) {
+          return el === this.password;
+        },
+        message: "Passwords are not the same!",
       },
-      message: 'Passwords are not the same!'
-    }
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    shop: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Shops",
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  active: {
-    type: Boolean,
-    default: true,
-    select: false
-  },
-  shop: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Shops'
-  },
-  queue: [{
-    type :mongoose.Schema.ObjectId,
-    ref : 'Queue'
-  }],
-  isVerified: {
-    type: Boolean,
-    default: false
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
-});
-
-userSchema.pre('save', async function(next) {
+);
+// userSchema.index({ email: 1 }, { unique: true });
+userSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified
-  if (!this.isModified('password')) return next();
+  if (!this.isModified("password")) return next();
 
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
@@ -74,27 +76,33 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-userSchema.pre('save', function(next) {
-  if (!this.isModified('password') || this.isNew) return next();
+userSchema.virtual("queueList", {
+  ref: "Queue",
+  foreignField: "user",
+  localField: "_id",
+});
+
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
-userSchema.pre(/^find/, function(next) {
+userSchema.pre(/^find/, function (next) {
   // this points to the current query
   this.find({ active: { $ne: false } });
   next();
 });
 
-userSchema.methods.correctPassword = async function(
+userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -107,13 +115,13 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = function() {
-  const resetToken = crypto.randomBytes(32).toString('hex');
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
 
   this.passwordResetToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(resetToken)
-    .digest('hex');
+    .digest("hex");
 
   // console.log({ resetToken }, this.passwordResetToken);
 
@@ -122,5 +130,11 @@ userSchema.methods.createPasswordResetToken = function() {
   return resetToken;
 };
 
-const User = mongoose.model('User', userSchema);
+userSchema.virtual("queue", {
+  ref: "Queue",
+  foreignField: "user",
+  localField: "_id",
+});
+
+const User = mongoose.model("User", userSchema);
 export default User;

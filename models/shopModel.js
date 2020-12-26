@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 // import slugify from 'slugify';
 // const User = require('./userModel');
 // const validator = require('validator');
@@ -7,52 +7,54 @@ const shopSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'A Shop must have a name'],
+      // required: [true, "A Shop must have a name"],
       unique: true,
       trim: true,
-      maxlength: [40, 'A Shop name must have less or equal then 40 characters'],
+      maxlength: [40, "A Shop name must have less or equal then 40 characters"],
       // validate: [validator.isAlpha, 'Tour name must only contain characters']
     },
     ratingsAverage: {
       type: Number,
-      default:0 ,
-      min: [0, 'Rating must be above 1.0'],
-      max: [5, 'Rating must be below 5.0'],
-      set: val => Math.round(val * 10) / 10 // 4.666666, 46.6666, 47, 4.7
+      default: 0,
+      min: [0, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
+      set: (val) => Math.round(val * 10) / 10, // 4.666666, 46.6666, 47, 4.7
     },
     ratingsQuantity: {
       type: Number,
-      default: 0
+      default: 0,
     },
     info: {
       type: String,
       trim: true,
-      required: [true, 'A shop must have a info']
+      // required: [true, "A shop must have a info"],
     },
     description: {
       type: String,
-      trim: true
+      trim: true,
     },
-    imageCover: {
+    coverPhoto: {
       type: String,
-      required: [true, 'A Shop must have a cover image']
     },
-    images: [String],
+    cardPhoto: String,
     // createdAt: {
     //   type: Date,
     //   default: Date.now(),
     //   select: false
     // },
-    openingHours: [{
+    openingHours: [
+      {
         open: Number,
-        close: Number
-    }],
+        close: Number,
+      },
+    ],
     Location: {
       // GeoJSON
+      required: false,
       type: {
         type: String,
-        default: 'Point',
-        enum: ['Point']
+        default: "Point",
+        enum: ["Point"],
       },
       coordinates: [Number],
     },
@@ -64,43 +66,51 @@ const shopSchema = new mongoose.Schema(
     // ],
     address: {
       type: String,
-      required: [true, 'A Shop must have a valid address']
+      // required: [true, "A Shop must have a valid address"],
     },
     AverageWaitTime: {
-        type:Number,
-        default: 0
+      type: Number,
+      default: 0,
     },
     isOpen: {
-        type : Boolean,
-        default : false
+      type: Boolean,
+      default: false,
     },
     shopType: {
-      type:String,
-      required: [true, 'A Shop must have a Type i.e a profession e.g. Car Shop , Hospital ,etc']
+      type: String,
+      // required: [
+      //   true,
+      //   "A Shop must have a Type i.e a profession e.g. Car Shop , Hospital ,etc",
+      // ],
+      // default: "Temp",
     },
     phoneNumber: Number,
     website: String,
+    active: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+    toObject: { virtuals: true },
   }
 );
 
 // tourSchema.index({ price: 1 });
 // tourSchema.index({ price: 1, ratingsAverage: -1 });
 // tourSchema.index({ slug: 1 });
-shopSchema.index({ Location: '2dsphere' });
+shopSchema.index({ Location: "2dsphere" });
 
 // tourSchema.virtual('durationWeeks').get(function() {
 //   return this.duration / 7;
 // });
 
 // Virtual populate
-shopSchema.virtual('serviceBy', {
-  ref: 'Service',
-  foreignField: 'shop',
-  localField: '_id'
+shopSchema.virtual("serviceBy", {
+  ref: "Service",
+  foreignField: "shop",
+  localField: "_id",
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
@@ -129,7 +139,7 @@ shopSchema.virtual('serviceBy', {
 // // tourSchema.pre('find', function(next) {
 // tourSchema.pre(/^find/, function(next) {
 //   this.find({ secretTour: { $ne: true } });
-    
+
 //   this.start = Date.now();
 //   next();
 // });
@@ -156,6 +166,6 @@ shopSchema.virtual('serviceBy', {
 //   next();
 // });
 
-const Shop = mongoose.model('Shop', shopSchema);
+const Shop = mongoose.model("Shop", shopSchema);
 
 export default Shop;
