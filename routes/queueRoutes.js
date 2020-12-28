@@ -1,15 +1,16 @@
-import express from 'express';
-import { isLoggedIn } from '../controllers/authController.js';
-import { createQueue } from '../controllers/queueController.js';
+import express from "express";
+import { isLoggedIn } from "../controllers/authController.js";
+import {
+  changeQueueStatus,
+  createQueue,
+} from "../controllers/queueController.js";
 
 const router = express.Router();
 
-// router.use((req, res, next) =>  {
-//     req.body = req.body.data;
-//     console.log(req.body)
-//     next();
-// } )
+// CREATE QUEUE
+router.post("/createQueue", isLoggedIn, createQueue);
 
-router.post('/createQueue' ,isLoggedIn, createQueue)
+// CHANGE QUEUE STATUS LIKE ACCEPTED , REJECTED , ETC
+router.post("/changeQueueStatus", changeQueueStatus);
 
-export default router
+export default router;

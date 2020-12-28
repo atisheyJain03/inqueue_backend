@@ -6,7 +6,6 @@ import {
   updateMe,
   uploadUserPhoto,
 } from "../controllers/userController.js";
-import multer from "multer";
 import {
   signup,
   login,
@@ -18,49 +17,22 @@ import {
 
 const router = express.Router();
 
-router.post("/signup", signup);
-router.post("/login", login);
-router.get("/logout", isLoggedIn, logout);
+router.post("/signup", signup); // @ROUTE SIGNUP USER
+router.post("/login", login); // @ROUTE LOGIN USER
+router.get("/logout", isLoggedIn, logout); // @ROUTE LOGOUT USER/ADMIN
+// @  ROUTE FOR QUEUE STATES FOR USER  LIKE ALL TICKETS GENERATE BY HIM
 router.get("/getQueue", isLoggedIn, getUserQueue);
-router.get("/me", isLoggedIn, getMe);
-router.get("/logout", isLoggedIn, logout);
+router.get("/me", isLoggedIn, getMe); // @ROUTE ABOUT ME
+
+// @ROUTE TO UPDATE USER INFO LIKE PHOTO , NAME, ETC
 router.patch(
   "/updateMe",
-  isLoggedIn,
+  isLoggedIn, // CHECK  IF LOGGED IN OR NOT BY COOKIE
   uploadUserPhoto,
   resizeUserPhoto,
   updateMe
 );
-router.post("/loginShop", loginShop);
-router.post("/signUpShop", signupShop);
-
-// router.post('/forgotPassword', authController.forgotPassword);
-// router.patch('/resetPassword/:token', authController.resetPassword);
-
-// // Protect all routes after this middleware
-// router.use(authController.protect);
-
-// router.patch('/updateMyPassword', authController.updatePassword);
-// router.get('/me', userController.getMe, userController.getUser);
-// router.patch(
-//   '/updateMe',
-//   userController.uploadUserPhoto,
-//   userController.resizeUserPhoto,
-//   userController.updateMe
-// );
-// router.delete('/deleteMe', userController.deleteMe);
-
-// router.use(authController.restrictTo('admin'));
-
-// router
-//   .route('/')
-//   .get(userController.getAllUsers)
-//   .post(userController.createUser);
-
-// router
-//   .route('/:id')
-//   .get(userController.getUser)
-//   .patch(userController.updateUser)
-//   .delete(userController.deleteUser);
+router.post("/loginShop", loginShop); // @ROUTE FOR LOGIN AS ADMIN WITH SHOP REGISTER
+router.post("/signUpShop", signupShop); // @ROUTE CREATE ACCOUNT AS ADMIN WITH EMPTY SHOP WITH IT
 
 export default router;

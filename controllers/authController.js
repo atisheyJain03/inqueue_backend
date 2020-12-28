@@ -26,7 +26,7 @@ const createSendToken = (user, statusCode, req, res) => {
 
   // Remove password from output
   user.password = undefined;
-  console.log(user);
+  // console.log(user);
   res.status(statusCode).json({
     status: "success",
     token,
@@ -125,7 +125,7 @@ export const protect = catchAsync(async (req, res, next) => {
 
 // Only for rendered pages, no errors!
 export const isLoggedIn = async (req, res, next) => {
-  console.log("isLoggedIn");
+  // console.log("isLoggedIn");
   if (req.cookies.jwt) {
     try {
       // 1) verify token
@@ -150,7 +150,7 @@ export const isLoggedIn = async (req, res, next) => {
       req.userId = currentUser._id;
       res.locals.user = currentUser;
       // next();
-      console.log(res.locals.user);
+      // console.log(res.locals.user);
       return next();
     } catch (err) {
       return next();
@@ -266,7 +266,7 @@ export const loginShop = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect email or password", 401));
   }
 
-  console.log({ user });
+  // console.log({ user });
 
   if (user.role !== "admin") {
     return next(
@@ -292,7 +292,7 @@ export const signupShop = catchAsync(async (req, res, next) => {
   };
   user.role = "admin";
   const shop = await Shop.create({});
-  console.log(shop);
+  // console.log(shop);
   user.shop = shop.id;
   const newUser = await User.create(user);
 

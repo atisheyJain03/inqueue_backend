@@ -12,6 +12,7 @@ process.on("uncaughtException", (err) => {
 dotenv.config({ path: "./config.env" });
 import app from "./app.js";
 
+// CONNECT DB
 const DB = process.env.DATABASE.replace(
   "<password>",
   process.env.DATABASE_PASS
@@ -23,24 +24,35 @@ Mongoose.connect(DB, {
   useUnifiedTopology: true,
 }).then(() => console.log("DB connection successful!"));
 
+// PORT
 const port = process.env.PORT || 8000;
+// CREATE SERVER
 const server = http.createServer(app);
+// SOCKET IO (SERVER SIDE ) CONNECT TO SERVER
 export const io = new Server(server, {
-  // wsEngine: "eiows",
   cors: {
     origin: "*",
   },
+  upgrade: false,
+  transports: ["websocket", "polling"],
 });
 
-// export var io_socket = null;
-// io.on("connection", (socket) => {
-//   console.log("socked connected successfully");
-// });
+io.on("connection", (socket) => {
+  // THIS WILL JOIN THE CONNECTION FOR ROOMS
+  // THIS IS FOR REALTIME NOTIFICATIOINS FOR USER AND OWNER FOR TICKET REQUEST
+  socket.on("join", function (data) {
+    console.log({ data });
+    socket.join(data.id);
+  });
+  console.log("socked connected successfully");
+});
 
+// LISTENING ON PORT AFTER SETTING IO
 server.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
 
+// FOR ANY UNHANDLED ERROR THIS WILL CLOSE THE SERVER
 process.on("unhandledRejection", (err) => {
   console.log("UNHANDLED REJECTION! 💥 Shutting down...");
   console.log(err.name, err.message);
@@ -49,6 +61,7 @@ process.on("unhandledRejection", (err) => {
   });
 });
 
+// SIGTERM IS SPECIFIC TO TERMINATE SERVER AND WILL CLOSE THE SERVER ON DEMAND
 process.on("SIGTERM", () => {
   console.log("👋 SIGTERM RECEIVED. Shutting down gracefully");
   server.close(() => {

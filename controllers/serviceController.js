@@ -35,7 +35,7 @@ export const updateService = catchAsync(async (req, res) => {
     new: true,
     runValidators: true,
   });
-  console.log(updatesService);
+  // console.log(updatesService);
   res.status(202).json({
     status: "success",
     data: { service: updatesService },
@@ -44,9 +44,9 @@ export const updateService = catchAsync(async (req, res) => {
 
 export const deleteService = catchAsync(async (req, res) => {
   const id = req.params.id;
-  console.log(id);
+  // console.log(id);
   const deleteService = await Service.findByIdAndDelete(id);
-  console.log(deleteService);
+  // console.log(deleteService);
   res.status(204).json({
     status: "success",
     data: { service: deleteService },

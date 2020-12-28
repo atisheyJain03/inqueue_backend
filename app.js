@@ -1,38 +1,36 @@
-import path from "path";
 import express from "express";
-import dotenv from "dotenv";
-dotenv.config({ path: "./config.env" });
 
+// FOR ENVIROMENT VARIABLES
+import dotenv from "dotenv";
+dotenv.config({ path: "./config.env" }); // THIS IS IMPORTANT
+
+// IMPORTS FROM NODE MODULES
 import helmet from "helmet";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
+import expressMongoSanitize from "express-mongo-sanitize";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
 import hpp from "hpp";
-
 import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
 
+// IMPORT FROM OTHER MODULES
 import AppError from "./utils/appError.js";
-
 import globalErrorHandler from "./controllers/errorController.js";
 import userRouter from "./routes/userRoutes.js";
 import shopRouter from "./routes/shopRoutes.js";
 import queueRouter from "./routes/queueRoutes.js";
 import serviceRouter from "./routes/serviceRoutes.js";
-import morgan from "morgan";
-import rateLimit from "express-rate-limit";
-import cookieParser from "cookie-parser";
-import expressMongoSanitize from "express-mongo-sanitize";
-// import viewRouter from './routes/viewRoutes';
 
-// // Start express app
 const app = express();
 
 app.enable("trust proxy");
 
 // 1) GLOBAL MIDDLEWARES
-// Implement CORS
-// app.use(cors());
+
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 // Access-Control-Allow-Origin *
 
@@ -48,6 +46,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Limit requests from same API
+// LATER WILL CHANGE IT TO 100
+
 const limiter = rateLimit({
   max: 1000,
   windowMs: 60 * 60 * 1000,
@@ -92,16 +92,12 @@ app.use(xss());
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  // console.log(req.cookies);
   next();
 });
 
-// 3) ROUTES
-// app.use('/', viewRouter);
-
 //  THIS IS FOR FRONTEND API
-
 app.use((req, res, next) => {
+  // CONVERT BODY
   req.body = req.body.data;
   next();
 });
@@ -114,13 +110,12 @@ app.use("/api/v1/shops", shopRouter);
 app.use("/api/v1/service", serviceRouter);
 app.use("/api/v1/queue", queueRouter);
 
-// app.use('/api/v1/reviews', reviewRouter);
-// app.use('/api/v1/bookings', bookingRouter);
-
+// NOT FOUND
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
+// GLOBAL ERROR HANDLER
 app.use(globalErrorHandler);
 
 export default app;

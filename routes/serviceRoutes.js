@@ -8,20 +8,17 @@ import {
 } from "../controllers/serviceController.js";
 import { isShop } from "../controllers/shopController.js";
 
-// import userController from './../controllers/userController');
-// import authController from './../controllers/authController.js';
-
 const router = express.Router();
 
-// router.use((req, res, next) =>  {
-//     req.body = req.body.data;
-//     console.log(req.body)
-//     next();
-// } )
-
+// CREATE SERVICE IN SHOP BY ADMIN
 router.post("/createService", isLoggedIn, isShop, createService);
+
 router.get("/getQueue/:id", getFullQueue);
+
+// UPDATE SERVICE LIKE AVAILABLE OR NOT AVAILABLE
 router.patch("/updateService/:id", updateService);
+
+// DELETE SERVICE BY ADMIN
 router.delete("/deleteService/:id", deleteService);
 
 export default router;

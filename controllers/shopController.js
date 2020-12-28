@@ -3,8 +3,8 @@ import catchAsync from "../utils/catchAsync.js";
 import faker from "faker";
 import AppError from "../utils/appError.js";
 import sharp from "sharp";
-import User from "../models/userModel.js";
 
+// RESIZE COVER PHOTO
 export const resizeCoverPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
@@ -21,6 +21,7 @@ export const resizeCoverPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
+// RESIZE CARD PHOTO
 export const resizeCardPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
@@ -35,18 +36,8 @@ export const resizeCardPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
+// THIS IS FOR TEST PURPOSES ON;Y TO CREATE SHOP WITH TEST DATA
 export const createShop = catchAsync(async (req, res) => {
-  // console.log(req.body);
-  // const body = {...req.body};
-
-  // const obj = {
-  //     name : body.name,
-  //     description : body.description,
-  //     info : body.info,
-  //     openingHours : body.openingHours,
-  //     address : body.address,
-  // }
-
   const obj = {
     name: faker.company.companyName(),
     ratingsAverage: (faker.random.number() % 4) + 1,
@@ -69,15 +60,17 @@ export const createShop = catchAsync(async (req, res) => {
     phoneNumber: 9876545678,
     website: faker.internet.url(),
   };
-  // console.log(obj)
+
   const shop = await Shop.create(obj);
 
   res.status(201).json({
+    message: "this is dummy route used to create test data",
     status: "success",
     data: { shop },
   });
 });
 
+// GET ALL SHOPS
 export const getAllShops = catchAsync(async (req, res) => {
   const shops = await Shop.find();
   res.status(200).json({
@@ -86,22 +79,21 @@ export const getAllShops = catchAsync(async (req, res) => {
   });
 });
 
+// GET ONE SHOP
 export const getShop = catchAsync(async (req, res, next) => {
-  // console.log(req.params);
   let id = "";
   if (req.params.id) id = req.params.id;
   else id = res.locals.shop;
   const shop = await Shop.findById(id).populate("serviceBy");
   if (!shop) throw next(new AppError("Not Record found with this id", 404));
-  console.log(shop);
   res.status(200).json({
     status: "success",
     data: { shop },
   });
 });
 
+// SEND SHOP RECORD WHEN ASKED BY ADMIN
 export const getShopByAdmin = catchAsync(async (req, res, next) => {
-  // console.log(req.params);
   let id = res.locals.shop;
   const shop = await Shop.findById(id).populate({
     path: "serviceBy",
@@ -114,6 +106,7 @@ export const getShopByAdmin = catchAsync(async (req, res, next) => {
   });
 });
 
+// UPDATE COVER PHOTO
 export const updateCoverPhoto = catchAsync(async (req, res, next) => {
   const filteredBody = {};
   if (req.file)
@@ -129,19 +122,16 @@ export const updateCoverPhoto = catchAsync(async (req, res, next) => {
     }
   );
 
-  //const image = `http://localhost:8000/public/image/user/${req.file.filename}`;
-
   res.status(200).json({
     status: "success",
     data: {
       shop: updatedShop,
-      // image: "hello",
     },
   });
 });
 
+// UPDATE CARD PHOTO
 export const updateCardPhoto = catchAsync(async (req, res, next) => {
-  console.log(req.params.id);
   const filteredBody = {};
   if (req.file)
     filteredBody.cardPhoto = `http://localhost:8000/public/image/shop/${req.file.filename}`;
@@ -156,17 +146,15 @@ export const updateCardPhoto = catchAsync(async (req, res, next) => {
     }
   );
 
-  //const image = `http://localhost:8000/public/image/user/${req.file.filename}`;
-
   res.status(200).json({
     status: "success",
     data: {
       shop: updatedShop,
-      // image: "hello",
     },
   });
 });
 
+// CHECK IF USER IS ADMIN USER AND HAS SHOP LINKED WITH IT
 export const isShop = catchAsync(async (req, res, next) => {
   const user = res.locals.user;
   if (!user) {
@@ -191,22 +179,24 @@ export const isShop = catchAsync(async (req, res, next) => {
   if (!shop) {
     return new AppError("No shop or service is linked to this account", 401);
   }
-  console.log("/////////////////////////////////////////");
-  console.log(shop);
+
   res.locals.shop = user.shop;
-  console.log({ ...res.locals });
+
   next();
 });
 
+// UPDATE SHOP
 export const updateShop = catchAsync(async (req, res, next) => {
   const id = req.params.id;
-  console.log(id);
+
   const shopInfo = {};
   if (req.body.name) shopInfo.name = req.body.name;
   if (req.body.address) shopInfo.address = req.body.address;
   if (req.body.info) shopInfo.info = req.body.info;
   if (req.body.description) shopInfo.description = req.body.description;
   if (req.body.phoneNumber) shopInfo.phoneNumber = req.body.phoneNumber * 1;
+  if (req.body.shopType) shopInfo.shopType = req.body.shopType;
+  if (req.body.website) shopInfo.website = req.body.website;
   if (req.body.openingHours) {
     req.body.openingHours.forEach((value) => {
       value.open = value.open * 1;
@@ -227,7 +217,7 @@ export const updateShop = catchAsync(async (req, res, next) => {
     });
     shopInfo.openingHours = req.body.openingHours;
   }
-  console.log(res.locals.shop);
+  // console.log(res.locals.shop);
   const shop = await Shop.findByIdAndUpdate(id, shopInfo, {
     runValidators: true,
     new: true,
@@ -241,20 +231,25 @@ export const updateShop = catchAsync(async (req, res, next) => {
   });
 });
 
-// export const getAllShops = catchAsync(async (req, res) => {
-//   const shops = await Shop.find();
-//   res.status(200).json({
-//     status: "success",
-//     data: { shops },
-//   });
-// });
+// GETTING WAITING LIST FROM SHOP
+export const getWaitingList = catchAsync(async (req, res, next) => {
+  const queue = await Shop.findById(req.params.id)
+    .populate({
+      path: "waitingQueue",
+      select: "user service updatedAt",
+      populate: [
+        { path: "user", select: "name" },
+        { path: "service", select: "name" },
+      ],
+      options: { sort: { updatedAt: -1 } },
+    })
+    .select("waitingQueue");
+  // console.log(queue);
 
-// export const getShop = catchAsync(async (req, res, next) => {
-//   // console.log(req.params);
-//   const shop = await Shop.findById(req.params.id);
-//   if (!shop) throw next(new AppError("Not Record found with this id", 404));
-//   res.status(200).json({
-//     status: "success",
-//     data: { shop },
-//   });
-// });
+  res.status(200).json({
+    status: "success",
+    data: {
+      queue,
+    },
+  });
+});

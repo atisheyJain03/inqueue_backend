@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 // import slugify from 'slugify';
 // const User = require('./userModel');
-// const validator = require('validator');
+const validator = require("validator");
 
 const shopSchema = new mongoose.Schema(
   {
@@ -37,27 +37,22 @@ const shopSchema = new mongoose.Schema(
       type: String,
     },
     cardPhoto: String,
-    // createdAt: {
-    //   type: Date,
-    //   default: Date.now(),
-    //   select: false
-    // },
     openingHours: [
       {
         open: Number,
         close: Number,
       },
     ],
-    Location: {
-      // GeoJSON
-      required: false,
-      type: {
-        type: String,
-        default: "Point",
-        enum: ["Point"],
-      },
-      coordinates: [Number],
-    },
+    // Location: {
+    //   // GeoJSON
+    //   required: false,
+    //   type: {
+    //     type: String,
+    //     default: "Point",
+    //     enum: ["Point"],
+    //   },
+    //   coordinates: [Number],
+    // },
     // serviceBy: [
     //   {
     //     type: mongoose.Schema.ObjectId,
@@ -84,12 +79,25 @@ const shopSchema = new mongoose.Schema(
       // ],
       // default: "Temp",
     },
-    phoneNumber: Number,
-    website: String,
+    phoneNumber: {
+      type: Number,
+      min: 1000000000,
+      max: 9999999999,
+    },
+    website: {
+      type: String,
+      validate: [validator.isUrl, "Not a valid URL"],
+    },
     active: {
       type: Boolean,
       default: false,
     },
+    waitingQueue: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Queue",
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -97,43 +105,14 @@ const shopSchema = new mongoose.Schema(
   }
 );
 
-// tourSchema.index({ price: 1 });
-// tourSchema.index({ price: 1, ratingsAverage: -1 });
-// tourSchema.index({ slug: 1 });
 shopSchema.index({ Location: "2dsphere" });
 
-// tourSchema.virtual('durationWeeks').get(function() {
-//   return this.duration / 7;
-// });
-
-// Virtual populate
+// Virtual for all services linked to shop
 shopSchema.virtual("serviceBy", {
   ref: "Service",
   foreignField: "shop",
   localField: "_id",
 });
-
-// DOCUMENT MIDDLEWARE: runs before .save() and .create()
-// tourSchema.pre('save', function(next) {
-//   this.slug = slugify(this.name, { lower: true });
-//   next();
-// });
-
-// tourSchema.pre('save', async function(next) {
-//   const guidesPromises = this.guides.map(async id => await User.findById(id));
-//   this.guides = await Promise.all(guidesPromises);
-//   next();
-// });
-
-// tourSchema.pre('save', function(next) {
-//   console.log('Will save document...');
-//   next();
-// });
-
-// tourSchema.post('save', function(doc, next) {
-//   console.log(doc);
-//   next();
-// });
 
 // // QUERY MIDDLEWARE
 // // tourSchema.pre('find', function(next) {
@@ -144,17 +123,6 @@ shopSchema.virtual("serviceBy", {
 //   next();
 // });
 
-// tourSchema.pre(/^find/, function(next) {
-//   this.populate({
-//     path: 'guides',
-//     select: '-__v -passwordChangedAt'
-//   });
-
-//   next();
-// });
-
-// tourSchema.post(/^find/, function(docs, next) {
-//   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
 //   next();
 // });
 

@@ -28,7 +28,7 @@ const queueSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Waiting",
-      enum: ["Waiting", "Done", "Cancelled"],
+      enum: ["Accepted", "Rejected", "Cancelled", "Waiting", "Over"],
     },
     description: {
       type: String,

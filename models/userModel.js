@@ -49,9 +49,17 @@ const userSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
+    // FOR ADMIN USERS WHO HAS SHOP
     shop: {
       type: mongoose.Schema.ObjectId,
       ref: "Shops",
+      validate: {
+        // This only works on CREATE and SAVE!!!
+        validator: function () {
+          return "admin" === this.role;
+        },
+        message: "Need admin account to link shop",
+      },
     },
     isVerified: {
       type: Boolean,
@@ -76,6 +84,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// VIRTUAL FIEL WHICH WILL STORE ALL TICKETS USER HAS GENERATED
 userSchema.virtual("queueList", {
   ref: "Queue",
   foreignField: "user",
@@ -95,6 +104,7 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 
+// COMPARE PASSWORD IF IT IS CORRECT OR NOT
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
@@ -102,6 +112,7 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+// CHECK IF PASSWORD IS CHANGED AFTER THE TIME STAMP
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(

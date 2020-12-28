@@ -6,6 +6,8 @@ import AppError from "./../utils/appError.js";
 import Queue from "../models/queueModel.js";
 // import factory  from'./handlerFactory.js';
 
+// THIS CODE IS FOR DISK STORAGE
+
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, "public/image/user");
@@ -18,8 +20,7 @@ import Queue from "../models/queueModel.js";
 
 const multerStorage = multer.memoryStorage();
 
-// const upload = multer({ dest: "public/image/user" });
-
+// FILTER - PASS ONLY IMAGE
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);
@@ -33,8 +34,10 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
+//  TO UPLOAD A SINGLE PHOTO
 export const uploadUserPhoto = upload.single("photo");
 
+// RESIZE PHOTO AND CONVERT IT TO JSON AND COMPRESS IMAGE ALSO
 export const resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
@@ -57,18 +60,8 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-// export const getMe = (req, res, next) => {
-//   req.params.id = req.user.id;
-//   next();
-// };
-
 export const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
-
-  console.log(req.file);
-  console.log(req.body);
-  console.log(req.userId);
-
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
@@ -80,6 +73,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
 
   // 2) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = {};
+  // ONLY UPDATE NAME AND PROFILE PHOTO
   if (req.body.name) filteredBody.name = req.body.name;
   if (req.file)
     filteredBody.photo = `http://localhost:8000/public/image/user/${req.file.filename}`;
@@ -90,18 +84,16 @@ export const updateMe = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
-  //const image = `http://localhost:8000/public/image/user/${req.file.filename}`;
-
   res.status(200).json({
     status: "success",
     data: {
       user: updatedUser,
-      // image: "hello",
     },
   });
 });
 
 export const deleteMe = catchAsync(async (req, res, next) => {
+  // MAKE USER UNACTIVE NOT ACTUALLY DELETE THE USER
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
   res.status(204).json({
@@ -110,17 +102,8 @@ export const deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-export const createUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not defined! Please use /signup instead",
-  });
-};
-
+// THIS IS TO GET ALL THE TICKETS USER HAS GENERATED
 export const getUserQueue = catchAsync(async (req, res) => {
-  // console.log(req.params);
-  // const queue = await User.findById(req.userId)
-  // .populate('queueList').select('queueList')
   const queue = await Queue.find({ user: req.userId })
     .populate({
       path: "service",
@@ -128,15 +111,14 @@ export const getUserQueue = catchAsync(async (req, res) => {
     })
     .populate({ path: "shop", select: "name" })
     .sort({ updatedAt: -1 });
-  // console.log(queue);
   res.status(200).json({
     status: "success",
     data: { queue },
   });
 });
 
+// SENT INFORMATION ABOUT USER
 export const getMe = (req, res) => {
-  // console.log(res.locals.user);
   res.status(200).json({
     status: "success",
     data: {
