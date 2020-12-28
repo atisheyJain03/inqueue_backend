@@ -3,6 +3,7 @@ import catchAsync from "../utils/catchAsync.js";
 import faker from "faker";
 import AppError from "../utils/appError.js";
 import sharp from "sharp";
+import APIFeatures from "../utils/apiFeatures.js";
 
 // RESIZE COVER PHOTO
 export const resizeCoverPhoto = catchAsync(async (req, res, next) => {
@@ -45,6 +46,7 @@ export const createShop = catchAsync(async (req, res) => {
     info: faker.lorem.paragraph(),
     description: faker.lorem.paragraphs(),
     coverPhoto: faker.image.imageUrl(),
+    cardPhoto: faker.image.imageUrl(),
     openingHours: [
       { open: 1000, close: 1400 },
       { open: 1500, close: 1800 },
@@ -72,7 +74,16 @@ export const createShop = catchAsync(async (req, res) => {
 
 // GET ALL SHOPS
 export const getAllShops = catchAsync(async (req, res) => {
-  const shops = await Shop.find();
+  // const shops = await Shop.find();
+  let filter = {};
+  const features = new APIFeatures(Shop.find(filter), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+  // const doc = await features.query.explain();
+  const shops = await features.query;
+
   res.status(200).json({
     status: "success",
     data: { shops },

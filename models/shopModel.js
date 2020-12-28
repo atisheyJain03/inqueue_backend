@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 // import slugify from 'slugify';
 // const User = require('./userModel');
-const validator = require("validator");
+import validator from "validator";
 
 const shopSchema = new mongoose.Schema(
   {
@@ -86,7 +86,7 @@ const shopSchema = new mongoose.Schema(
     },
     website: {
       type: String,
-      validate: [validator.isUrl, "Not a valid URL"],
+      // validate: [validator.isUrl, "Not a valid URL"],
     },
     active: {
       type: Boolean,
