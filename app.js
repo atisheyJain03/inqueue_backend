@@ -42,6 +42,20 @@ app.options("*", cors());
 // Set security HTTP headers
 app.use(helmet());
 
+app.enable("trust proxy"); // optional, not needed for secure cookies
+app.use(
+  express.session({
+    secret: "somesecret",
+    // store : ..., // store works fine, sessions are stored
+    key: "sid",
+    proxy: true, // add this when behind a reverse proxy, if you need secure cookies
+    cookie: {
+      secure: true,
+      maxAge: 5184000000, // 2 months
+    },
+  })
+);
+
 // Development logging
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
