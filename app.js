@@ -1,5 +1,5 @@
 import express from "express";
-
+import path from "path";
 // FOR ENVIRONMENT VARIABLES
 import dotenv from "dotenv";
 dotenv.config({ path: "./config.env" }); // THIS IS IMPORTANT
@@ -28,6 +28,8 @@ import serviceRouter from "./routes/serviceRoutes.js";
 const app = express();
 
 app.enable("trust proxy");
+
+// app.set("view engine", "html");
 
 // 1) GLOBAL MIDDLEWARES
 
@@ -104,6 +106,12 @@ app.use((req, res, next) => {
 
 // this route is for images
 app.use("/public", express.static("public"));
+
+// app.use(express.static(path.join(".", "inqueue", "build")));
+
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(".", "inqueue", "build", "index.html"));
+// });
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/shops", shopRouter);

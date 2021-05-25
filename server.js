@@ -25,7 +25,7 @@ Mongoose.connect(DB, {
 }).then(() => console.log("DB connection successful!"));
 
 // PORT
-const port = process.env.PORT || 8000;
+let port = process.env.PORT || 8000;
 // CREATE SERVER
 const server = http.createServer(app);
 // SOCKET IO (SERVER SIDE ) CONNECT TO SERVER
