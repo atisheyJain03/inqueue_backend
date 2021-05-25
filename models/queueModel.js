@@ -12,6 +12,14 @@ const queueSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    userName: {
+      type: String,
+    },
+    phoneNumber: {
+      type: Number,
+      min: 1000000000,
+      max: 9999999999,
+    },
     email: {
       type: String,
       lowercase: true,

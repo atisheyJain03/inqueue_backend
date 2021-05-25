@@ -1,8 +1,8 @@
 import multer from "multer";
 import sharp from "sharp";
-import User from "./../models/userModel.js";
-import catchAsync from "./../utils/catchAsync.js";
-import AppError from "./../utils/appError.js";
+import User from "../models/userModel.js";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
 import Queue from "../models/queueModel.js";
 // import factory  from'./handlerFactory.js';
 
@@ -126,6 +126,20 @@ export const getMe = (req, res) => {
     },
   });
 };
+
+export const getNotifications = catchAsync(async (req, res, next) => {
+  const limit = req.query.limit * 1 || 10;
+  const skip = (req.query.page * 1 - 1) * limit;
+  const notifications = await User.findById(req.params.id).select({
+    notifications: { $slice: [skip, limit] },
+  });
+  res.status(200).json({
+    status: "success",
+    data: {
+      notifications,
+    },
+  });
+});
 
 // export const getUser = factory.getOne(User);
 // export const getAllUsers = factory.getAll(User);

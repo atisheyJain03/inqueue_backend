@@ -41,8 +41,9 @@ io.on("connection", (socket) => {
   // THIS WILL JOIN THE CONNECTION FOR ROOMS
   // THIS IS FOR REALTIME NOTIFICATIOINS FOR USER AND OWNER FOR TICKET REQUEST
   socket.on("join", function (data) {
-    console.log({ data });
-    socket.join(data.id);
+    console.log(data.idShop, data.idUser);
+    if (data.idShop) socket.join(data.idShop);
+    if (data.idUser) socket.join(data.idUser);
   });
   console.log("socked connected successfully");
 });

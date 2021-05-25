@@ -1,6 +1,6 @@
 import express from "express";
 
-// FOR ENVIROMENT VARIABLES
+// FOR ENVIRONMENT VARIABLES
 import dotenv from "dotenv";
 dotenv.config({ path: "./config.env" }); // THIS IS IMPORTANT
 
@@ -44,7 +44,7 @@ app.use(helmet());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
+app.use(morgan("dev"));
 // Limit requests from same API
 // LATER WILL CHANGE IT TO 100
 
@@ -95,7 +95,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//  THIS IS FOR FRONTEND API
+//* THIS IS FOR FRONTEND API
 app.use((req, res, next) => {
   // CONVERT BODY
   req.body = req.body.data;
@@ -109,7 +109,9 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/shops", shopRouter);
 app.use("/api/v1/service", serviceRouter);
 app.use("/api/v1/queue", queueRouter);
-
+app.all("/", (req, res) => {
+  res.send("hello from server");
+});
 // NOT FOUND
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

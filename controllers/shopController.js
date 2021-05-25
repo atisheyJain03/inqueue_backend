@@ -244,6 +244,8 @@ export const updateShop = catchAsync(async (req, res, next) => {
 
 // GETTING WAITING LIST FROM SHOP
 export const getWaitingList = catchAsync(async (req, res, next) => {
+  const limit = req.query.limit * 1 || 10;
+  const skip = (req.query.page * 1 - 1) * limit;
   const queue = await Shop.findById(req.params.id)
     .populate({
       path: "waitingQueue",
@@ -252,15 +254,29 @@ export const getWaitingList = catchAsync(async (req, res, next) => {
         { path: "user", select: "name" },
         { path: "service", select: "name" },
       ],
-      options: { sort: { updatedAt: -1 } },
+      options: { sort: { updatedAt: -1 }, limit: limit, skip: skip },
     })
     .select("waitingQueue");
-  // console.log(queue);
-
   res.status(200).json({
     status: "success",
     data: {
       queue,
     },
+  });
+});
+
+export const getServiceofShop = catchAsync(async (req, res, next) => {
+  let id = "";
+  if (req.params.id) id = req.params.id;
+  const shop = await Shop.findById(id)
+    .populate({
+      path: "serviceBy",
+      select: "name id",
+    })
+    .select("serviceBy");
+  if (!shop) throw next(new AppError("Not Record found with this id", 404));
+  res.status(200).json({
+    status: "success",
+    data: { services: shop },
   });
 });

@@ -37,7 +37,12 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 export const signup = catchAsync(async (req, res, next) => {
+  console.log(
+    "🚀 ~ file: authController.js ~ line 40 ~ signup ~ req",
+    req.body
+  );
   // console.log(req.cookies)
+
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,

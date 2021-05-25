@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getMe,
+  getNotifications,
   getUserQueue,
   resizeUserPhoto,
   updateMe,
@@ -13,7 +14,7 @@ import {
   isLoggedIn,
   loginShop,
   signupShop,
-} from "./../controllers/authController.js";
+} from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -34,5 +35,5 @@ router.patch(
 );
 router.post("/loginShop", loginShop); // @ROUTE FOR LOGIN AS ADMIN WITH SHOP REGISTER
 router.post("/signUpShop", signupShop); // @ROUTE CREATE ACCOUNT AS ADMIN WITH EMPTY SHOP WITH IT
-
+router.get("/notifications/:id", getNotifications);
 export default router;

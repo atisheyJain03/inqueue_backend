@@ -12,6 +12,7 @@ import {
   resizeCoverPhoto,
   resizeCardPhoto,
   getWaitingList,
+  getServiceofShop,
 } from "../controllers/shopController.js";
 import { uploadUserPhoto } from "../controllers/userController.js";
 
@@ -51,5 +52,5 @@ router.get("/waitingQueue/:id", getWaitingList);
 // TO CHECK IF USER IS AUTHORISED (ADMIN) OR NOT
 // THIS WILL RUN AUTOMITACLY (USEEFFECT IN REACT.JS) WHEN SETTINGS PAGE WILL RENDERED
 router.get("/getShopByAdmin", isLoggedIn, isShop, getShopByAdmin);
-
+router.get("/services/:id", getServiceofShop);
 export default router;

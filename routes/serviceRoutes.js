@@ -1,6 +1,7 @@
 import express from "express";
 import { isLoggedIn } from "../controllers/authController.js";
 import {
+  changeCurrentNumber,
   createService,
   deleteService,
   getFullQueue,
@@ -17,6 +18,7 @@ router.get("/getQueue/:id", getFullQueue);
 
 // UPDATE SERVICE LIKE AVAILABLE OR NOT AVAILABLE
 router.patch("/updateService/:id", updateService);
+router.patch("/changeCurrentNumber/:id", changeCurrentNumber);
 
 // DELETE SERVICE BY ADMIN
 router.delete("/deleteService/:id", deleteService);

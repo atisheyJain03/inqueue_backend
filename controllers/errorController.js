@@ -1,6 +1,6 @@
 import AppError from "./../utils/appError.js";
 import dotenv from "dotenv";
-dotenv.config({ path: "../config.env" });
+dotenv.config({ path: "../../config.env" });
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
@@ -16,7 +16,11 @@ const handleDuplicateFieldsDB = (err) => {
 
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
-  // console.log(errors);
+  console.log(
+    "🚀 ~ file: errorController.js ~ line 19 ~ handleValidationErrorDB ~ errors",
+    errors
+  );
+
   const message = `Invalid input data. ${errors.join(". ")}`;
   return new AppError(message, 400);
 };
@@ -40,6 +44,10 @@ const sendErrorDev = (err, req, res) => {
 
   // B) RENDERED WEBSITE
   console.error("ERROR 💥", err);
+  console.log(
+    "🚀 ~ file: errorController.js ~ line 48 ~ sendErrorDev ~ err",
+    err
+  );
   return res.status(err.statusCode).render("error", {
     title: "Something went wrong!",
     msg: err.message,

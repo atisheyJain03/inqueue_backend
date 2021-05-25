@@ -21,7 +21,16 @@ export const createService = catchAsync(async (req, res) => {
 });
 
 export const getFullQueue = catchAsync(async (req, res) => {
-  const queue = await Service.findById(req.params.id).populate("queue");
+  const limit = req.query.limit * 1 || 10;
+  const skip = (req.query.page * 1 - 1) * limit;
+
+  const queue = await Service.findById(req.params.id).populate({
+    path: "queue",
+
+    options: { sort: { updatedAt: -1 }, limit: limit, skip: skip },
+
+    populate: { path: "user", select: "name email phoneNumber" },
+  });
   //   console.log(queue);
   res.status(200).json({
     status: "success",
@@ -50,5 +59,32 @@ export const deleteService = catchAsync(async (req, res) => {
   res.status(204).json({
     status: "success",
     data: { service: deleteService },
+  });
+});
+
+export const changeCurrentNumber = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const number = req.body.number * 1 || 0;
+  let service = await Service.findById(id);
+  if (!service) return new new AppError("No service found", 404)();
+  if (service.currentNumber >= service.totalNumber) {
+    return next(
+      new AppError("Current Number cannot be greater than totalNumber", 401)
+    );
+  } else {
+    service = await Service.findByIdAndUpdate(
+      id,
+      {
+        $inc: { currentNumber: number },
+      },
+      {
+        new: true,
+      }
+    ).select("currentNumber");
+  }
+  console.log(service);
+  res.status(200).json({
+    status: "success",
+    data: { service },
   });
 });

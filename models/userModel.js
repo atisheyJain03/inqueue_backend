@@ -65,6 +65,15 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    notifications: [
+      {
+        shop: String,
+        service: String,
+        status: String,
+        number: Number,
+        createdAt: { type: Date, default: Date.now() },
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
