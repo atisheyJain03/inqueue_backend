@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import session from "express-session";
 // FOR ENVIRONMENT VARIABLES
 import dotenv from "dotenv";
 dotenv.config({ path: "./config.env" }); // THIS IS IMPORTANT
@@ -44,14 +45,13 @@ app.use(helmet());
 
 app.enable("trust proxy"); // optional, not needed for secure cookies
 app.use(
-  express.session({
+  session({
     secret: "somesecret",
     // store : ..., // store works fine, sessions are stored
-    key: "sid",
+    key: "sidhelloworld",
     proxy: true, // add this when behind a reverse proxy, if you need secure cookies
     cookie: {
       secure: true,
-      maxAge: 5184000000, // 2 months
     },
   })
 );
