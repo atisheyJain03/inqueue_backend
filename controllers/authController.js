@@ -131,12 +131,18 @@ export const protect = catchAsync(async (req, res, next) => {
 // Only for rendered pages, no errors!
 export const isLoggedIn = async (req, res, next) => {
   // console.log("isLoggedIn");
-  console.log(req.params.token);
-  if (req.params.token) {
+  // console.log("----------", req.headers.cks);
+  const token = req.params.token || req.headers.cks;
+  console.log(
+    "🚀 ~ file: authController.js ~ line 136 ~ isLoggedIn ~ token",
+    token
+  );
+
+  if (token) {
     try {
       // 1) verify token
       const decoded = await promisify(jwt.verify)(
-        req.params.token,
+        token,
         process.env.JWT_SECRET
       );
       // console.log(decoded.id)
@@ -155,6 +161,10 @@ export const isLoggedIn = async (req, res, next) => {
       // req.custom.id = decoded.id;
       req.userId = currentUser._id;
       res.locals.user = currentUser;
+      console.log(
+        "🚀 ~ file: authController.js ~ line 158 ~ isLoggedIn ~ currentUser",
+        currentUser
+      );
       // next();
       // console.log(res.locals.user);
       return next();

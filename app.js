@@ -34,7 +34,7 @@ app.enable("trust proxy");
 
 // 1) GLOBAL MIDDLEWARES
 
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: "https://inqueue-2f51e.web.app/" }));
 // Access-Control-Allow-Origin *
 
 app.options("*", cors());

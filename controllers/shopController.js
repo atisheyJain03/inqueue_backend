@@ -168,6 +168,7 @@ export const updateCardPhoto = catchAsync(async (req, res, next) => {
 // CHECK IF USER IS ADMIN USER AND HAS SHOP LINKED WITH IT
 export const isShop = catchAsync(async (req, res, next) => {
   const user = res.locals.user;
+  console.log("🚀 ~ file: shopController.js ~ line 171 ~ isShop ~ user", user);
   if (!user) {
     return next(
       next(new AppError("User is not logged in . Please log in", 401))
