@@ -20,7 +20,7 @@ const createSendToken = (user, statusCode, req, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: false,
+    httpOnly: true,
     secure: req.secure || req.headers["x-forwarded-proto"] === "https",
   });
 
@@ -131,12 +131,12 @@ export const protect = catchAsync(async (req, res, next) => {
 // Only for rendered pages, no errors!
 export const isLoggedIn = async (req, res, next) => {
   // console.log("isLoggedIn");
-  console.log(req.cookies);
-  if (req.cookies.jwt) {
+  console.log(req.params.token);
+  if (req.params.token) {
     try {
       // 1) verify token
       const decoded = await promisify(jwt.verify)(
-        req.cookies.jwt,
+        req.params.token,
         process.env.JWT_SECRET
       );
       // console.log(decoded.id)

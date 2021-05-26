@@ -23,7 +23,7 @@ router.post("/login", login); // @ROUTE LOGIN USER
 router.get("/logout", isLoggedIn, logout); // @ROUTE LOGOUT USER/ADMIN
 // @  ROUTE FOR QUEUE STATES FOR USER  LIKE ALL TICKETS GENERATE BY HIM
 router.get("/getQueue", isLoggedIn, getUserQueue);
-router.get("/me", isLoggedIn, getMe); // @ROUTE ABOUT ME
+router.get("/me/:token", isLoggedIn, getMe); // @ROUTE ABOUT ME
 
 // @ROUTE TO UPDATE USER INFO LIKE PHOTO , NAME, ETC
 router.patch(
