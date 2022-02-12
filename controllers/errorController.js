@@ -16,11 +16,6 @@ const handleDuplicateFieldsDB = (err) => {
 
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
-  console.log(
-    "🚀 ~ file: errorController.js ~ line 19 ~ handleValidationErrorDB ~ errors",
-    errors
-  );
-
   const message = `Invalid input data. ${errors.join(". ")}`;
   return new AppError(message, 400);
 };
@@ -98,18 +93,22 @@ export default (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
-  if (process.env.NODE_ENV === "development") {
-    sendErrorDev(err, req, res);
-  } else if (process.env.NODE_ENV === "production") {
-    let error = { ...err };
-    if (err.name === "CastError") error = handleCastErrorDB(err);
-    else if (err.code === 11000) error = handleDuplicateFieldsDB(err);
-    else if (err.name === "ValidationError")
-      // console.log("err");
-      error = handleValidationErrorDB(err);
-    else if (err.name === "JsonWebTokenError") error = handleJWTError();
-    else if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
+  sendErrorDev(err, req, res);
+  // }
 
-    sendErrorProd(error, req, res);
-  }
+  // if (process.env.NODE_ENV === "development") {
+  //   sendErrorDev(err, req, res);
+  // }
+  // else if (process.env.NODE_ENV === "production") {
+  //   let error = { ...err };
+  //   if (err.name === "CastError") error = handleCastErrorDB(err);
+  //   else if (err.code === 11000) error = handleDuplicateFieldsDB(err);
+  //   else if (err.name === "ValidationError")
+  //     // console.log("err");
+  //     error = handleValidationErrorDB(err);
+  //   else if (err.name === "JsonWebTokenError") error = handleJWTError();
+  //   else if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
+
+  //   sendErrorProd(error, req, res);
+  // }
 };
