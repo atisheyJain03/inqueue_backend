@@ -8,7 +8,8 @@ const shopSchema = new mongoose.Schema(
     name: {
       type: String,
       // required: [true, "A Shop must have a name"],
-      unique: true,
+      default: "",
+      // unique: true,
       trim: true,
       maxlength: [40, "A Shop name must have less or equal then 40 characters"],
       // validate: [validator.isAlpha, 'Tour name must only contain characters']

@@ -3,7 +3,7 @@ import path from "path";
 import session from "express-session";
 // FOR ENVIRONMENT VARIABLES
 import dotenv from "dotenv";
-dotenv.config({ path: "./config.env" }); // THIS IS IMPORTANT
+dotenv.config({ path: "./.env" }); // THIS IS IMPORTANT
 
 // IMPORTS FROM NODE MODULES
 import helmet from "helmet";
@@ -34,9 +34,9 @@ app.enable("trust proxy");
 
 // 1) GLOBAL MIDDLEWARES
 
-app.use(cors({ credentials: true, origin: "https://inqueue-2f51e.web.app" }));
+// app.use(cors({ credentials: true, origin: "https://inqueue-2f51e.web.app" }));
 
-// app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 // Access-Control-Allow-Origin *
 
 app.options("*", cors());

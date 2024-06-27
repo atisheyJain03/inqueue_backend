@@ -1,6 +1,6 @@
 import AppError from "./../utils/appError.js";
 import dotenv from "dotenv";
-dotenv.config({ path: "../../config.env" });
+dotenv.config({ path: "../../.env" });
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;

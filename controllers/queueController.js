@@ -9,7 +9,7 @@ import { io } from "../server.js";
 import User from "../models/userModel.js";
 // import sendSMS from "../../sms.js";
 
-dotenv.config({ path: "../config.env" }); // THIS IS IMPORTANT
+dotenv.config({ path: "../.env" }); // THIS IS IMPORTANT
 
 // import { io, io_socket } from "../server.js";
 
