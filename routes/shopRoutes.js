@@ -9,8 +9,8 @@ import {
   updateShop,
   isShop,
   getShopByAdmin,
-  resizeCoverPhoto,
-  resizeCardPhoto,
+  // resizeCoverPhoto,
+  // resizeCardPhoto,
   getWaitingList,
   getServiceofShop,
 } from "../controllers/shopController.js";
@@ -28,7 +28,7 @@ router.get("/getShop/:id", getShop); // @ROUTE GET A SHOP WITH GIVEN ID OF SHOP
 router.patch(
   "/updateShop/coverPhoto/:id",
   uploadUserPhoto,
-  resizeCoverPhoto,
+  // resizeCoverPhoto,
   updateCoverPhoto
 );
 
@@ -36,7 +36,7 @@ router.patch(
 router.patch(
   "/updateShop/cardPhoto/:id",
   uploadUserPhoto,
-  resizeCardPhoto,
+  // resizeCardPhoto,
   updateCardPhoto
 );
 

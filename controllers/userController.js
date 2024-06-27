@@ -1,5 +1,5 @@
 import multer from "multer";
-import sharp from "sharp";
+// import sharp from "sharp";
 import User from "../models/userModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
@@ -38,19 +38,19 @@ const upload = multer({
 export const uploadUserPhoto = upload.single("photo");
 
 // RESIZE PHOTO AND CONVERT IT TO JSON AND COMPRESS IMAGE ALSO
-export const resizeUserPhoto = catchAsync(async (req, res, next) => {
-  if (!req.file) return next();
+// export const resizeUserPhoto = catchAsync(async (req, res, next) => {
+//   if (!req.file) return next();
 
-  req.file.filename = `user-${Date.now()}.jpeg`;
+//   req.file.filename = `user-${Date.now()}.jpeg`;
 
-  await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat("jpeg")
-    .jpeg({ quality: 100 })
-    .toFile(`public/image/user/${req.file.filename}`);
+//   await sharp(req.file.buffer)
+//     .resize(500, 500)
+//     .toFormat("jpeg")
+//     .jpeg({ quality: 100 })
+//     .toFile(`public/image/user/${req.file.filename}`);
 
-  next();
-});
+//   next();
+// });
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};

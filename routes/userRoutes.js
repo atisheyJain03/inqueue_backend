@@ -3,7 +3,7 @@ import {
   getMe,
   getNotifications,
   getUserQueue,
-  resizeUserPhoto,
+  // resizeUserPhoto,
   updateMe,
   uploadUserPhoto,
 } from "../controllers/userController.js";
@@ -30,7 +30,7 @@ router.patch(
   "/updateMe",
   isLoggedIn, // CHECK  IF LOGGED IN OR NOT BY COOKIE
   uploadUserPhoto,
-  resizeUserPhoto,
+  // resizeUserPhoto,
   updateMe
 );
 router.post("/loginShop", loginShop); // @ROUTE FOR LOGIN AS ADMIN WITH SHOP REGISTER

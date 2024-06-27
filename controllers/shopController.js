@@ -2,40 +2,40 @@ import Shop from "../models/shopModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import faker from "faker";
 import AppError from "../utils/appError.js";
-import sharp from "sharp";
+// import sharp from "sharp";
 import APIFeatures from "../utils/apiFeatures.js";
 
 // RESIZE COVER PHOTO
-export const resizeCoverPhoto = catchAsync(async (req, res, next) => {
-  if (!req.file) return next();
+// export const resizeCoverPhoto = catchAsync(async (req, res, next) => {
+//   if (!req.file) return next();
 
-  req.file.filename = `cover-${Date.now()}.jpeg`;
+//   req.file.filename = `cover-${Date.now()}.jpeg`;
 
-  await sharp(req.file.buffer)
-    .resize(820, 312, {
-      fit: "fill",
-    })
-    .toFormat("jpeg")
-    .jpeg({ quality: 100 })
-    .toFile(`public/image/shop/${req.file.filename}`);
+//   await sharp(req.file.buffer)
+//     .resize(820, 312, {
+//       fit: "fill",
+//     })
+//     .toFormat("jpeg")
+//     .jpeg({ quality: 100 })
+//     .toFile(`public/image/shop/${req.file.filename}`);
 
-  next();
-});
+//   next();
+// });
 
 // RESIZE CARD PHOTO
-export const resizeCardPhoto = catchAsync(async (req, res, next) => {
-  if (!req.file) return next();
+// export const resizeCardPhoto = catchAsync(async (req, res, next) => {
+//   if (!req.file) return next();
 
-  req.file.filename = `card-${Date.now()}.jpeg`;
+//   req.file.filename = `card-${Date.now()}.jpeg`;
 
-  await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat("jpeg")
-    .jpeg({ quality: 100 })
-    .toFile(`public/image/shop/${req.file.filename}`);
+//   await sharp(req.file.buffer)
+//     .resize(500, 500)
+//     .toFormat("jpeg")
+//     .jpeg({ quality: 100 })
+//     .toFile(`public/image/shop/${req.file.filename}`);
 
-  next();
-});
+//   next();
+// });
 
 // THIS IS FOR TEST PURPOSES ON;Y TO CREATE SHOP WITH TEST DATA
 export const createShop = catchAsync(async (req, res) => {
